@@ -25,6 +25,7 @@
     "@cosmjs/tendermint-rpc": "^0.29.4",
     "@emotion/react": "^11.10.8",
     "@emotion/styled": "^11.10.8",
+    "@empower-plastic/empowerjs": "^0.0.18",
     "@hookform/resolvers": "^3.1.0",
     "@keplr-wallet/cosmos": "^0.11.59",
     "@keplr-wallet/stores": "^0.11.59",
