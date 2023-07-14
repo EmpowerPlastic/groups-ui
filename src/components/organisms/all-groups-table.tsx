@@ -12,7 +12,6 @@ import {
   Flex,
   Heading,
   Link,
-  Spacer,
   Table,
   TableContainer,
   Tbody,
@@ -43,7 +42,7 @@ export const AllGroupsTable = () => {
       const rpcQueryClient = await createRPCQueryClient({
         rpcEndpoint: VITE_RPC_URL,
       })
-      const { groups, pagination } = await rpcQueryClient.cosmos.group.v1.groups({})
+      const { groups } = await rpcQueryClient.cosmos.group.v1.groups({})
       setAllGroups(groups)
       setCurrentGroups(() => paginateGroup(groups, pageSize, 1))
     } catch (e) {
