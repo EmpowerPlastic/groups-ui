@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { cosmos } from '@empower-plastic/empowerjs'
 import { GroupInfo } from '@empower-plastic/empowerjs/types/codegen/cosmos/group/v1/types'
+import Pagination from 'rc-pagination'
 
 import { formatDate } from 'util/date'
 
@@ -8,8 +9,10 @@ import { ROUTE_PATH } from 'routes'
 
 import {
   Center,
+  Flex,
   Heading,
   Link,
+  Spacer,
   Table,
   TableContainer,
   Tbody,
@@ -19,17 +22,30 @@ import {
   Tr,
 } from '@/atoms'
 
+import 'rc-pagination/assets/index.css'
+
 export const AllGroupsTable = () => {
+  const { VITE_RPC_URL } = import.meta.env
   const { createRPCQueryClient } = cosmos.ClientFactory
   const [allGroups, setAllGroups] = useState<GroupInfo[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [currentGroups, setCurrentGroups] = useState<GroupInfo[]>([])
+  const pageSize = 5
+
+  const paginateGroup = (array: GroupInfo[], pageSize: number, pageNumber: number) => {
+    const startIndex = (pageNumber - 1) * pageSize
+    const endIndex = startIndex + pageSize
+    return array.slice(startIndex, endIndex)
+  }
 
   const getAllGroups = async () => {
     try {
       const rpcQueryClient = await createRPCQueryClient({
-        rpcEndpoint: 'https://empower-testnet-rpc.polkachu.com/',
+        rpcEndpoint: VITE_RPC_URL,
       })
       const { groups, pagination } = await rpcQueryClient.cosmos.group.v1.groups({})
       setAllGroups(groups)
+      setCurrentGroups(() => paginateGroup(groups, pageSize, 1))
     } catch (e) {
       console.log(e)
     }
@@ -49,6 +65,11 @@ export const AllGroupsTable = () => {
     )
   }
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    setCurrentGroups(() => paginateGroup(allGroups, pageSize, page))
+  }
+
   return (
     <TableContainer>
       <Table variant="striped" size="lg">
@@ -61,7 +82,7 @@ export const AllGroupsTable = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {allGroups.map((group, i) => (
+          {currentGroups.map((group, i) => (
             <Tr key={i + group.totalWeight}>
               <Td>
                 <Link to={ROUTE_PATH.group(group.id.toString())}>
@@ -75,6 +96,14 @@ export const AllGroupsTable = () => {
           ))}
         </Tbody>
       </Table>
+      <Flex flexDirection={'row'} justify={'flex-end'} style={{ padding: '10px' }}>
+        <Pagination
+          total={allGroups?.length}
+          pageSize={pageSize}
+          onChange={handlePageChange}
+          current={currentPage}
+        />
+      </Flex>
     </TableContainer>
   )
 }
