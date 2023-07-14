@@ -3,6 +3,7 @@ import { useAdminGroups, useMemberGroups } from 'hooks/use-query'
 import { Wallet } from 'store/wallet.store'
 
 import { Button, Flex, Heading, PageContainer, RouteLink } from '@/atoms'
+import { AllGroupsTable } from '@/organisms/all-groups-table'
 import { MyGroupsTable } from '@/organisms/my-groups-table'
 
 export default function Groups() {
@@ -19,6 +20,8 @@ export default function Groups() {
           </Button>
         </Flex>
         <MyGroupsTable memberGroups={memberGroups} adminGroups={adminGroups} />
+        <Heading>All groups</Heading>
+        <AllGroupsTable />
       </Flex>
     </PageContainer>
   )
